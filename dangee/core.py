@@ -55,12 +55,24 @@ class Dangee:
         return self.self_define
 
     @staticmethod
+    def get_xref_from(method_analysis):
+
+        xref_from_result = set()
+
+        for _, call, _ in method_analysis.get_xref_from():
+            # Call is the MethodAnalysis in the androguard
+            # call.class_name, call.name, call.descriptor
+            xref_from_result.add(call)
+
+        return xref_from_result
+
+    @staticmethod
     def find_method(words, target_method_set):
         """
         Case-insensitive string comparison in target_method.
         :param words:
         :param target_method_set:
-        :return: True or False
+        :return: a set of search_result
         """
         search_result = set()
 
@@ -72,11 +84,13 @@ class Dangee:
         return search_result
 
 
-a = Dangee("14d9f1a92dd984d6040cc41ed06e273e.apk")
+dangee = Dangee("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-all_m = a.get_all_method()
+first_api = dangee.find_method("location", dangee.get_native_method())
 
-aaaa = a.find_method("location", all_m)
+second_api = dangee.find_method("sms", dangee.get_native_method())
 
-for i in aaaa:
-    print(i)
+for i in first_api:
+
+    for a in dangee.get_xref_from(i):
+        print(a)
