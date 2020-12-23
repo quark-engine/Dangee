@@ -25,7 +25,9 @@ def get_method_bytecode(method_analysis):
             if length_operands == 0:
                 # No register, no parameter
                 bytecode_obj = BytecodeObject(
-                    ins.get_name(), None, None,
+                    ins.get_name(),
+                    None,
+                    None,
                 )
             elif length_operands == 1:
                 # Only one register
@@ -34,7 +36,9 @@ def get_method_bytecode(method_analysis):
                     f"v{ins.get_operands()[length_operands - 1][1]}",
                 )
                 bytecode_obj = BytecodeObject(
-                    ins.get_name(), reg_list, None,
+                    ins.get_name(),
+                    reg_list,
+                    None,
                 )
             elif length_operands >= 2:
                 # the last one is parameter, the other are registers.
@@ -52,7 +56,9 @@ def get_method_bytecode(method_analysis):
                     parameter = parameter[1]
 
                 bytecode_obj = BytecodeObject(
-                    ins.get_name(), reg_list, parameter,
+                    ins.get_name(),
+                    reg_list,
+                    parameter,
                 )
 
             yield bytecode_obj
@@ -270,7 +276,10 @@ def hasHandleRegister(first_method, second_method):
                                 first_method_pattern = f"{first_call_method.class_name}->{first_call_method.name}{first_call_method.descriptor}"
                                 second_method_pattern = f"{second_call_method.class_name}->{second_call_method.name}{second_call_method.descriptor}"
 
-                                if first_method_pattern in c_func and second_method_pattern in c_func:
+                                if (
+                                    first_method_pattern in c_func
+                                    and second_method_pattern in c_func
+                                ):
                                     state = True
                                     result.add(mutual_parent)
         if state:

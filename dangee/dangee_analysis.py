@@ -52,7 +52,9 @@ class DangeeAanlysis:
         for item1 in self.value:
             for item2 in other_dangee_analysis.value:
                 if hasMutualParentFunction(item1, item2):
-                    result_list.append({(item1, item2): hasMutualParentFunction(item1, item2)})
+                    result_list.append(
+                        {(item1, item2): hasMutualParentFunction(item1, item2)}
+                    )
 
         return result_list
 
@@ -63,6 +65,8 @@ class DangeeAanlysis:
         for item1 in self.value:
             for item2 in other_dangee_analysis.value:
                 if hasHandleRegister(item1, item2):
-                    result_list.append({(item1, item2): hasHandleRegister(item1, item2)})
+                    result_list.append(
+                        {(item1, item2): hasHandleRegister(item1, item2)}
+                    )
 
         return result_list

@@ -13,7 +13,7 @@ class Dangee:
         "all_method",
         "native_api",
         "self_define",
-        "buff_method_set"
+        "buff_method_set",
     ]
 
     def __init__(self, apkpath):
@@ -95,7 +95,7 @@ class Dangee:
         return DangeeAanlysis(result_set)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Example
 
     d = Dangee("14d9f1a92dd984d6040cc41ed06e273e.apk")
