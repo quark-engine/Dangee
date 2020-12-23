@@ -1,94 +1,12 @@
 import operator
-import copy
+
 from androguard.core import androconf
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 from quark.Evaluator.pyeval import PyEval
-from quark.Objects.bytecodeobject import BytecodeObject
+
+from dangee.util import get_method_bytecode, contains
 
 MAX_SEARCH_LAYER = 3
-
-
-def get_method_bytecode(method_analysis):
-    """
-    Return the corresponding bytecode according to the
-    given class name and method name.
-    :param method_analysis: the method analysis in androguard
-    :return: a generator of all bytecode instructions
-    """
-
-    try:
-        for _, ins in method_analysis.get_method().get_instructions_idx():
-            bytecode_obj = None
-            reg_list = []
-
-            # count the number of the registers.
-            length_operands = len(ins.get_operands())
-            if length_operands == 0:
-                # No register, no parameter
-                bytecode_obj = BytecodeObject(
-                    ins.get_name(), None, None,
-                )
-            elif length_operands == 1:
-                # Only one register
-
-                reg_list.append(
-                    f"v{ins.get_operands()[length_operands - 1][1]}",
-                )
-                bytecode_obj = BytecodeObject(
-                    ins.get_name(), reg_list, None,
-                )
-            elif length_operands >= 2:
-                # the last one is parameter, the other are registers.
-
-                parameter = ins.get_operands()[length_operands - 1]
-                for i in range(0, length_operands - 1):
-                    reg_list.append(
-                        "v" + str(ins.get_operands()[i][1]),
-                    )
-                if len(parameter) == 3:
-                    # method or value
-                    parameter = parameter[2]
-                else:
-                    # Operand.OFFSET
-                    parameter = parameter[1]
-
-                bytecode_obj = BytecodeObject(
-                    ins.get_name(), reg_list, parameter,
-                )
-
-            yield bytecode_obj
-    except AttributeError as error:
-        # TODO Log the rule here
-        pass
-
-
-def contains(subset_to_check, target_list):
-    """
-    Check the sequence pattern within two list.
-    -----------------------------------------------------------------
-    subset_to_check = ["getCellLocation", "sendTextMessage"]
-    target_list = ["put", "getCellLocation", "query", "sendTextMessage"]
-    then it will return true.
-    -----------------------------------------------------------------
-    subset_to_check = ["getCellLocation", "sendTextMessage"]
-    target_list = ["sendTextMessage", "put", "getCellLocation", "query"]
-    then it will return False.
-    """
-
-    target_copy = copy.copy(target_list)
-
-    # Delete elements that do not exist in the subset_to_check list
-    for item in target_copy:
-        if item not in subset_to_check:
-            target_copy.remove(item)
-
-    for i in range(len(target_copy) - len(subset_to_check) + 1):
-        for j in range(len(subset_to_check)):
-            if target_copy[i + j] != subset_to_check[j]:
-                break
-        else:
-            return True
-    return False
 
 
 class Dangee:
@@ -100,11 +18,13 @@ class Dangee:
         "all_method",
         "native_api",
         "self_define",
+        "buff_data"
     ]
 
     def __init__(self, apkpath):
 
         self.ret_type = androconf.is_android(apkpath)
+        self.buff_data = set()
 
         if self.ret_type == "APK":
             # return the APK, list of DalvikVMFormat, and Analysis objects
@@ -125,6 +45,7 @@ class Dangee:
         for method_analysis in self.analysis.get_methods():
 
             self.all_method.add(method_analysis)
+            self.buff_data.add(method_analysis)
 
             if method_analysis.is_android_api():
                 self.native_api.add(method_analysis)
@@ -345,26 +266,61 @@ class Dangee:
                 return result
         return None
 
+    ##################### interface
+    @property
+    def data(self):
+
+        return self.buff_data
+
+    def isNative(self):
+
+        for method_analysis in self.buff_data.copy():
+            if not method_analysis.is_android_api():
+                self.buff_data.remove(method_analysis)
+
+        return self
+
+    def match(self, words):
+
+        for method_analysis in self.buff_data.copy():
+
+            if not words.lower() in str(method_analysis.full_name).lower():
+                self.buff_data.remove(method_analysis)
+
+        return self
+
+    def hasMutualParentFunctionWith(self, data_set1, data_set2):
+
+        result = []
+
+        for item1 in data_set1:
+            for item2 in data_set2:
+                result.append({(item1, item2): d.hasMutualParentFunction(item1, item2)})
+
+        return result
+
+    def dataflowto(self, data_set1, data_set2):
+
+        result = []
+
+        for item1 in data_set1:
+            for item2 in data_set2:
+                result.append({(item1, item2): d.hasHandleRegister(item1, item2)})
+
+        return result
+
+    def reset(self):
+
+        self.buff_data = self.all_method.copy()
+
 
 if __name__ == '__main__':
-
     # Usage
 
-    dangee = Dangee("Roaming_Mantis.dex")
+    d = Dangee("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-    first_api_list = dangee.find_method("Usage", dangee.get_native_method())
+    m1_data = d.isNative().match("getCelllocation").data
 
-    second_api_list = dangee.find_method("Package", dangee.get_native_method())
+    d.reset()
 
-    for item_first in first_api_list:
-
-        for item_second in second_api_list:
-
-            if dangee.hasMutualParentFunction(item_first, item_second):
-                print(dangee.hasMutualParentFunction(item_first, item_second))
-
-            if dangee.hasOrder(item_first, item_second):
-                print(dangee.hasOrder(item_first, item_second))
-
-            if dangee.hasHandleRegister(item_first, item_second):
-                print(dangee.hasHandleRegister(item_first, item_second))
+    m2_data = d.isNative().match("sendtextmessage").data
