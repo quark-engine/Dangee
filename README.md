@@ -55,7 +55,7 @@ m2 = d.isNative().match("package")
 
 m1.hasMutualParentFunctionWith(m2)
 ```
-> [{(<analysis.MethodAnalysis Landroid/app/usage/UsageStats;->getPackageName()Ljava/lang/String;>, <analysis.MethodAnalysis Landroid/app/usage/UsageStats;->getPackageName()Ljava/lang/String;>): {<analysis.MethodAnalysis Lcom/Loader;->getTopActivityName$loader_release(Landroid/content/Context;)Ljava/lang/String; [access_flags=public final] @ 0x30ec4>}}...
+> list[ {tuple(method1, method2) : result_of_mutual_parent_function_found } ]
 
 
 6. Data flow check
@@ -66,5 +66,5 @@ m2 = d.isNative().match("package")
 
 m1.dataFlowto(m2)
 ```
-> [{(<analysis.MethodAnalysis Landroid/app/usage/UsageStatsManager;->queryUsageStats(I J J)Ljava/util/List;>, <analysis.MethodAnalysis Landroid/app/usage/UsageStats;->getPackageName()Ljava/lang/String;>): {<analysis.MethodAnalysis Lcom/Loader;->getTopActivityName$loader_release(Landroid/content/Context;)Ljava/lang/String; [access_flags=public final] @ 0x30ec4>}}]
+> list[ {tuple(method1, method2) : result_of_data_flow_to_found } ]
 
