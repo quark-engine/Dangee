@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 quark-engine = "*"
+Dangee = {editable = true,path = "."}
 
 [dev-packages]
 black = "*"
