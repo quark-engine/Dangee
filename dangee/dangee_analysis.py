@@ -14,9 +14,17 @@ class DangeeAanlysis:
 
     @property
     def value(self):
+        """
+        Return the current method set from buff data.
+        :return: a set of current method set
+        """
         return self.buff_method_set
 
     def isNative(self):
+        """
+        Return the native Android APIs from current buff method set.
+        :return: a new instance of DangeeAanlysis with buff method set
+        """
 
         result_set = set()
 
@@ -28,6 +36,10 @@ class DangeeAanlysis:
         return DangeeAanlysis(result_set)
 
     def isSelfDefine(self):
+        """
+        Return the self-defined method from current buff method set.
+        :return: a new instance of DangeeAanlysis with buff method set
+        """
 
         result_set = set()
 
@@ -40,6 +52,10 @@ class DangeeAanlysis:
         return DangeeAanlysis(result_set)
 
     def get_xref_from(self):
+        """
+        Return the xref from method from current buff method set.
+        :return: a new instance of DangeeAanlysis with buff method set
+        """
 
         result_set = set()
 
@@ -51,6 +67,10 @@ class DangeeAanlysis:
         return DangeeAanlysis(result_set)
 
     def get_xref_to(self):
+        """
+        Return the xref to method from current buff method set.
+        :return: a new instance of DangeeAanlysis with buff method set
+        """
 
         result_set = set()
 
@@ -62,6 +82,11 @@ class DangeeAanlysis:
         return DangeeAanlysis(result_set)
 
     def match(self, words):
+        """
+        Returns the method that matches the words in the current buff method set.
+        :param words: string for search
+        :return: a new instance of DangeeAanlysis with buff method set
+        """
 
         result_set = set()
 
@@ -86,6 +111,11 @@ class DangeeAanlysis:
         return result_list
 
     def dataFlowto(self, other_dangee_analysis):
+        """
+        Return the mutual parent function if two given method(self, other) are handling same register.
+        :param other_dangee_analysis:
+        :return: a set of mutual parent function
+        """
 
         result_list = []
 
