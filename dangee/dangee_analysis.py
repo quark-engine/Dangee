@@ -1,4 +1,9 @@
-from dangee.util import hasMutualParentFunction, hasHandleRegister
+from dangee.util import (
+    hasMutualParentFunction,
+    hasHandleRegister,
+    get_xref_from,
+    get_xref_to,
+)
 
 
 class DangeeAanlysis:
@@ -31,6 +36,28 @@ class DangeeAanlysis:
             if method_analysis.is_external():
                 continue
             result_set.add(method_analysis)
+
+        return DangeeAanlysis(result_set)
+
+    def get_xref_from(self):
+
+        result_set = set()
+
+        for method_analysis in self.buff_method_set.copy():
+
+            for method_from in get_xref_from(method_analysis):
+                result_set.add(method_from)
+
+        return DangeeAanlysis(result_set)
+
+    def get_xref_to(self):
+
+        result_set = set()
+
+        for method_analysis in self.buff_method_set.copy():
+
+            for method_from in get_xref_to(method_analysis):
+                result_set.add(method_from)
 
         return DangeeAanlysis(result_set)
 

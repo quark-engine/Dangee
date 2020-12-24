@@ -107,6 +107,17 @@ def get_xref_from(method_analysis):
     return xref_from_result
 
 
+def get_xref_to(method_analysis):
+    xref_to_result = set()
+
+    for _, call, _ in method_analysis.get_xref_to():
+        # Call is the MethodAnalysis in the androguard
+        # call.class_name, call.name, call.descriptor
+        xref_to_result.add(call)
+
+    return xref_to_result
+
+
 def find_previous_method(base_method, parent_function, wrapper, visited_methods=None):
     """
     Find the method under the parent function, based on base_method before to parent_function.
@@ -277,8 +288,8 @@ def hasHandleRegister(first_method, second_method):
                                 second_method_pattern = f"{second_call_method.class_name}->{second_call_method.name}{second_call_method.descriptor}"
 
                                 if (
-                                    first_method_pattern in c_func
-                                    and second_method_pattern in c_func
+                                        first_method_pattern in c_func
+                                        and second_method_pattern in c_func
                                 ):
                                     state = True
                                     result.add(mutual_parent)

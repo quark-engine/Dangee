@@ -98,14 +98,8 @@ class Dangee:
 if __name__ == "__main__":
     # Example
 
-    d = Dangee("14d9f1a92dd984d6040cc41ed06e273e.apk")
+    d = Dangee("Roaming_Mantis.dex")
 
-    m1_data = d.match("location").isSelfDefine()
+    m1 = d.isNative().match("package").match("UsageStats")
 
-    m2_data = d.match("sendsms")
-
-    print(m1_data.value)
-
-    # print(m1_data.hasMutualParentFunctionWith(m2_data))
-
-    # print(m1_data.dataFlowto(m2_data))
+    print(m1.get_xref_from().value)
