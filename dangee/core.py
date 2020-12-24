@@ -102,4 +102,4 @@ if __name__ == "__main__":
 
     m1 = d.isNative().match("package").match("UsageStats")
 
-    print(m1.get_xref_from().value)
+    print(m1.get_xref_from().get_xref_to().get_xref_to().value)
