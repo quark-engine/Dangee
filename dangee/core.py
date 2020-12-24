@@ -7,8 +7,6 @@ from dangee.dangee_analysis import DangeeAanlysis
 class Dangee:
     __slots__ = [
         "ret_type",
-        "apk",
-        "dalvikvmformat",
         "analysis",
         "all_method",
         "native_api",
@@ -23,7 +21,7 @@ class Dangee:
 
         if self.ret_type == "APK":
             # return the APK, list of DalvikVMFormat, and Analysis objects
-            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apkpath)
+            _, _, self.analysis = AnalyzeAPK(apkpath)
 
         if self.ret_type == "DEX":
             # return the sha256hash, DalvikVMFormat, and Analysis objects
@@ -44,16 +42,7 @@ class Dangee:
             if not method_analysis.is_external():
                 self.self_define.add(method_analysis)
 
-    def get_all_method(self):
-
-        return self.all_method
-
-    def get_native_method(self):
-
-        return self.native_api
-
-    def get_self_define_method(self):
-        return self.self_define
+        del _
 
     @property
     def value(self):
