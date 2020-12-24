@@ -47,16 +47,18 @@ Multi-level match
 d.isNative().match("package").match("UsageStats").value
 ```
 
-5. Mutual parent function check
+5. Crossreferences (XREFs)
 
 ```python
+
+# XREFs FROM:
 m1 = d.isNative().match("usage")
-m2 = d.isNative().match("package")
+m1.get_xref_from().value
 
-m1.hasMutualParentFunctionWith(m2)
+# XREFs TO:
+m2 = d.isSelfDefine().match("getTopActivityName$loader_release")
+m2.get_xref_to().value
 ```
-> list[ {tuple(method1, method2) : result_of_mutual_parent_function_found } ]
-
 
 6. Data flow check
 
