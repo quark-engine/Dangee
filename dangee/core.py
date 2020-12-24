@@ -8,9 +8,6 @@ class Dangee:
     __slots__ = [
         "ret_type",
         "analysis",
-        "all_method",
-        "native_api",
-        "self_define",
         "buff_method_set",
     ]
 
@@ -27,20 +24,8 @@ class Dangee:
             # return the sha256hash, DalvikVMFormat, and Analysis objects
             _, _, self.analysis = AnalyzeDex(apkpath)
 
-        self.all_method = set()
-        self.native_api = set()
-        self.self_define = set()
-
         for method_analysis in self.analysis.get_methods():
-
-            self.all_method.add(method_analysis)
             self.buff_method_set.add(method_analysis)
-
-            if method_analysis.is_android_api():
-                self.native_api.add(method_analysis)
-
-            if not method_analysis.is_external():
-                self.self_define.add(method_analysis)
 
         del _
 
